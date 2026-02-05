@@ -20,6 +20,8 @@ const App: React.FC = () => {
   const [isJoining, setIsJoining] = useState(false);
   const [joinName, setJoinName] = useState('');
   const [dbStatus, setDbStatus] = useState<'checking' | 'connected' | 'error'>('checking');
+  const [adminCode, setAdminCode] = useState('');
+  const [isAuthenticatingHost, setIsAuthenticatingHost] = useState(false);
 
   const channelRef = useRef<BroadcastChannel | null>(null);
   const stateRef = useRef<GameState>(gameState);
@@ -182,10 +184,84 @@ const App: React.FC = () => {
           <p className="text-zinc-400 text-lg">Interactive Game Show Platform</p>
 
           <div className="grid grid-cols-1 gap-4 pt-8">
-            {!isJoining ? (
+            {isJoining ? (
+              <form onSubmit={handleJoin} className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
+                <div className="text-left">
+                  <label className="block text-sm font-bold text-zinc-500 uppercase tracking-widest mb-2">Enter Your Name</label>
+                  <input
+                    autoFocus
+                    type="text"
+                    value={joinName}
+                    onChange={(e) => setJoinName(e.target.value)}
+                    placeholder="e.g. Alex"
+                    className="w-full bg-black border border-zinc-700 rounded-xl px-4 py-4 text-white text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    maxLength={15}
+                  />
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsJoining(false)}
+                    className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 py-4 rounded-xl font-bold transition-colors"
+                  >
+                    CANCEL
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={!joinName.trim()}
+                    className="flex-[2] bg-blue-600 hover:bg-blue-700 disabled:opacity-30 text-white py-4 rounded-xl font-bold transition-all"
+                  >
+                    JOIN GAME
+                  </button>
+                </div>
+              </form>
+            ) : isAuthenticatingHost ? (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (adminCode === 'Admin') {
+                    setRole(Role.HOST);
+                    setIsAuthenticatingHost(false);
+                    setAdminCode('');
+                  } else {
+                    alert("Incorrect Admin Code!");
+                    setAdminCode('');
+                  }
+                }}
+                className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-300"
+              >
+                <div className="text-left">
+                  <label className="block text-sm font-bold text-zinc-500 uppercase tracking-widest mb-2">Host Access Code</label>
+                  <input
+                    autoFocus
+                    type="password"
+                    value={adminCode}
+                    onChange={(e) => setAdminCode(e.target.value)}
+                    placeholder="Enter code..."
+                    className="w-full bg-black border border-zinc-700 rounded-xl px-4 py-4 text-white text-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                  />
+                </div>
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => { setIsAuthenticatingHost(false); setAdminCode(''); }}
+                    className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 py-4 rounded-xl font-bold transition-colors"
+                  >
+                    CANCEL
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={!adminCode.trim()}
+                    className="flex-[2] bg-amber-600 hover:bg-amber-700 disabled:opacity-30 text-white py-4 rounded-xl font-bold transition-all"
+                  >
+                    ENTER HOST ROOM
+                  </button>
+                </div>
+              </form>
+            ) : (
               <>
                 <button
-                  onClick={() => setRole(Role.HOST)}
+                  onClick={() => setIsAuthenticatingHost(true)}
                   className="group relative px-6 py-4 bg-zinc-800 hover:bg-zinc-700 rounded-xl transition-all border border-zinc-700 flex items-center justify-between"
                 >
                   <div className="text-left">
@@ -217,37 +293,6 @@ const App: React.FC = () => {
                   <i className="fa-solid fa-tv text-purple-500 group-hover:scale-110 transition-transform"></i>
                 </button>
               </>
-            ) : (
-              <form onSubmit={handleJoin} className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-300">
-                <div className="text-left">
-                  <label className="block text-sm font-bold text-zinc-500 uppercase tracking-widest mb-2">Enter Your Name</label>
-                  <input
-                    autoFocus
-                    type="text"
-                    value={joinName}
-                    onChange={(e) => setJoinName(e.target.value)}
-                    placeholder="e.g. Alex"
-                    className="w-full bg-black border border-zinc-700 rounded-xl px-4 py-4 text-white text-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    maxLength={15}
-                  />
-                </div>
-                <div className="flex gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setIsJoining(false)}
-                    className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-400 py-4 rounded-xl font-bold transition-colors"
-                  >
-                    CANCEL
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={!joinName.trim()}
-                    className="flex-[2] bg-blue-600 hover:bg-blue-700 disabled:opacity-30 text-white py-4 rounded-xl font-bold transition-all"
-                  >
-                    JOIN GAME
-                  </button>
-                </div>
-              </form>
             )}
           </div>
 
