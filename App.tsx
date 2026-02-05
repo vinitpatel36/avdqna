@@ -14,9 +14,13 @@ const INITIAL_STATE: GameState = {
 };
 
 const App: React.FC = () => {
-  const [role, setRole] = useState<Role | null>(null);
+  const [role, setRole] = useState<Role | null>(() => {
+    return localStorage.getItem('qna-role') as Role || null;
+  });
   const [gameState, setGameState] = useState<GameState>(INITIAL_STATE);
-  const [participantId, setParticipantId] = useState<string | null>(null);
+  const [participantId, setParticipantId] = useState<string | null>(() => {
+    return localStorage.getItem('qna-participant-id') || null;
+  });
   const [isJoining, setIsJoining] = useState(false);
   const [joinName, setJoinName] = useState('');
   const [dbStatus, setDbStatus] = useState<'checking' | 'connected' | 'error'>('checking');
@@ -34,6 +38,13 @@ const App: React.FC = () => {
 
   useEffect(() => {
     roleRef.current = role;
+
+    // Save to localStorage
+    if (role) localStorage.setItem('qna-role', role);
+    else localStorage.removeItem('qna-role');
+
+    if (participantId) localStorage.setItem('qna-participant-id', participantId);
+    else localStorage.removeItem('qna-participant-id');
 
     // Auto-return players to lobby selection if the room is wiped
     if (role === Role.PARTICIPANT && participantId) {

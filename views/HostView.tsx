@@ -23,19 +23,7 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
   };
 
   const handleNext = () => {
-    if (gameState.status === GameStatus.LOBBY) {
-      if (gameState.questionQueue.length === 0) return;
-      const [nextQ, ...remainingQueue] = gameState.questionQueue;
-      updateState({
-        ...gameState,
-        question: nextQ,
-        questionQueue: remainingQueue,
-        status: GameStatus.QUESTION_ACTIVE,
-        participants: gameState.participants.map(p => ({ ...p, answer: '', isSubmitted: false }))
-      });
-    } else if (gameState.status === GameStatus.QUESTION_ACTIVE) {
-      updateState({ ...gameState, status: GameStatus.RESULTS });
-    } else if (gameState.status === GameStatus.RESULTS) {
+    if (gameState.status === GameStatus.LOBBY || gameState.status === GameStatus.QUESTION_ACTIVE || gameState.status === GameStatus.RESULTS) {
       if (gameState.questionQueue.length === 0) {
         updateState({ ...gameState, status: GameStatus.LOBBY, question: '' });
       } else {
@@ -52,9 +40,7 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
   };
 
   const handleBack = () => {
-    if (gameState.status === GameStatus.RESULTS) {
-      updateState({ ...gameState, status: GameStatus.QUESTION_ACTIVE });
-    } else if (gameState.status === GameStatus.QUESTION_ACTIVE) {
+    if (gameState.status === GameStatus.QUESTION_ACTIVE || gameState.status === GameStatus.RESULTS) {
       const newQueue = gameState.question ? [gameState.question, ...gameState.questionQueue] : gameState.questionQueue;
       updateState({
         ...gameState,
@@ -152,10 +138,8 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
               className="flex-[3] min-w-[200px] bg-blue-600 hover:bg-blue-700 disabled:opacity-30 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-3 text-lg shadow-lg active:scale-95"
             >
               <i className="fa-solid fa-forward"></i>
-              {gameState.status === GameStatus.LOBBY ? 'START SHOW' :
-                gameState.status === GameStatus.QUESTION_ACTIVE ? 'REVEAL ANSWERS' :
-                  'NEXT QUESTION'}
-              {gameState.status !== GameStatus.QUESTION_ACTIVE && gameState.questionQueue.length > 0 &&
+              {gameState.status === GameStatus.LOBBY ? 'START SHOW' : 'NEXT QUESTION'}
+              {gameState.questionQueue.length > 0 &&
                 <span className="bg-black/30 px-2 py-0.5 rounded text-sm">{gameState.questionQueue.length}</span>
               }
             </button>
