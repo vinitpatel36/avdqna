@@ -72,7 +72,11 @@ const App: React.FC = () => {
 
         const serverState = await fetchInitialGameState();
         if (serverState) {
-          setGameState(serverState);
+          setGameState({
+            ...INITIAL_STATE,
+            ...serverState,
+            questionHistory: serverState.questionHistory || []
+          });
         }
         setDbStatus('connected');
       } catch (err) {

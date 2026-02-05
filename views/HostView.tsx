@@ -23,8 +23,8 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
   };
 
   const handleNext = () => {
-    // Current question becomes history if moving forward
-    const newHistory = gameState.question ? [...gameState.questionHistory, gameState.question] : gameState.questionHistory;
+    const history = gameState.questionHistory || [];
+    const newHistory = gameState.question ? [...history, gameState.question] : history;
 
     if (gameState.questionQueue.length === 0) {
       updateState({
@@ -49,7 +49,8 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
   const handleBack = () => {
     if (gameState.status === GameStatus.LOBBY) return;
 
-    if (gameState.questionHistory.length === 0) {
+    const history = gameState.questionHistory || [];
+    if (history.length === 0) {
       // If no history, just go back to lobby and put current question back in queue
       const newQueue = gameState.question ? [gameState.question, ...gameState.questionQueue] : gameState.questionQueue;
       updateState({
@@ -60,9 +61,8 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
         questionHistory: []
       });
     } else {
-      // Pop last question from history
-      const lastQ = gameState.questionHistory[gameState.questionHistory.length - 1];
-      const remainingHistory = gameState.questionHistory.slice(0, -1);
+      const lastQ = history[history.length - 1];
+      const remainingHistory = history.slice(0, -1);
 
       // Put current question back at start of queue
       const newQueue = gameState.question ? [gameState.question, ...gameState.questionQueue] : gameState.questionQueue;
