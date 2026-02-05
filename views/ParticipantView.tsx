@@ -55,7 +55,7 @@ const ParticipantView: React.FC<ParticipantViewProps> = ({ gameState, participan
               <span className="text-xs text-blue-500 font-semibold tracking-widest uppercase">Contestant</span>
             </div>
           </div>
-          <div className={`px-3 py-1 rounded-full text-xs font-bold ${gameState.status === GameStatus.QUESTION_ACTIVE ? 'bg-emerald-500/10 text-emerald-500' : 'bg-zinc-800 text-zinc-500'}`}>
+          <div className={`px-3 py-1 rounded-full text-[10px] sm:text-xs font-bold ${gameState.status === GameStatus.QUESTION_ACTIVE ? 'bg-emerald-500/10 text-emerald-500' : 'bg-zinc-800 text-zinc-500'}`}>
             {gameState.status === GameStatus.QUESTION_ACTIVE ? 'LIVE' : 'WAITING'}
           </div>
         </header>
@@ -79,9 +79,9 @@ const ParticipantView: React.FC<ParticipantViewProps> = ({ gameState, participan
 
         {gameState.status === GameStatus.QUESTION_ACTIVE && (
           <div className="space-y-6">
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 shadow-xl">
-              <h4 className="text-xs text-zinc-500 uppercase font-bold tracking-widest mb-4">The Question</h4>
-              <p className="text-2xl font-semibold leading-snug">{gameState.question}</p>
+            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 sm:p-6 shadow-xl">
+              <h4 className="text-[10px] sm:text-xs text-zinc-500 uppercase font-bold tracking-widest mb-4">The Question</h4>
+              <p className="text-xl sm:text-2xl font-semibold leading-snug">{gameState.question}</p>
             </div>
 
             {me.isSubmitted ? (
@@ -97,12 +97,12 @@ const ParticipantView: React.FC<ParticipantViewProps> = ({ gameState, participan
                   value={answer}
                   onChange={(e) => setAnswer(e.target.value)}
                   placeholder="Type your answer here..."
-                  className="w-full h-32 bg-zinc-900 border border-zinc-700 rounded-xl p-4 text-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                  className="w-full h-32 bg-zinc-900 border border-zinc-700 rounded-xl p-4 text-lg sm:text-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none shadow-inner"
                 />
                 <button
                   onClick={handleSubmit}
                   disabled={!answer.trim()}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-30 text-white py-4 rounded-xl font-bold text-lg transition-all"
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-30 text-white py-4 rounded-xl font-bold text-lg transition-all shadow-lg active:scale-[0.98]"
                 >
                   SUBMIT ANSWER
                 </button>

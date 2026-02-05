@@ -78,12 +78,12 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
   return (
     <div className="min-h-screen bg-zinc-950 p-6 flex flex-col items-center">
       <div className="max-w-6xl w-full space-y-6">
-        <header className="flex items-center justify-between mb-8">
+        <header className="flex flex-col sm:flex-row items-center justify-between mb-8 gap-4 text-center sm:text-left">
           <div>
-            <h2 className="text-3xl font-display text-white">HOST CONTROL PANEL</h2>
-            <p className="text-zinc-500">Manage your contestants and questions</p>
+            <h2 className="text-2xl sm:text-3xl font-display text-white">HOST CONTROL PANEL</h2>
+            <p className="text-zinc-500 text-sm sm:text-base">Manage your contestants and questions</p>
           </div>
-          <div className="px-4 py-2 bg-blue-500/10 border border-blue-500/30 rounded-lg text-blue-400 text-sm font-semibold">
+          <div className="px-4 py-2 bg-blue-500/10 border border-blue-500/30 rounded-lg text-blue-400 text-xs sm:text-sm font-semibold whitespace-nowrap">
             {gameState.participants.length}/5 PLAYERS
           </div>
         </header>
@@ -109,18 +109,18 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
 
               {/* Manual Entry only */}
               <form onSubmit={handleAddManualQuestion} className="space-y-4">
-                <div className="flex gap-3">
+                <div className="flex flex-col sm:flex-row gap-3">
                   <input
                     type="text"
                     placeholder="Type your question here..."
                     value={manualQuestion}
                     onChange={(e) => setManualQuestion(e.target.value)}
-                    className="flex-1 bg-black border border-zinc-700 rounded-xl px-4 py-3 text-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-display tracking-wide"
+                    className="flex-1 bg-black border border-zinc-700 rounded-xl px-4 py-3 text-base sm:text-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-display tracking-wide"
                   />
                   <button
                     type="submit"
                     disabled={!manualQuestion.trim()}
-                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 px-8 py-3 rounded-xl font-bold text-sm tracking-widest uppercase transition-all whitespace-nowrap shadow-lg shadow-blue-900/20"
+                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 px-6 sm:px-8 py-3 rounded-xl font-bold text-xs sm:text-sm tracking-widest uppercase transition-all whitespace-nowrap shadow-lg shadow-blue-900/20"
                   >
                     ADD TO QUEUE
                   </button>
@@ -142,42 +142,44 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
                 </p>
               </div>
 
-              <div className="flex flex-wrap gap-4">
+              <div className="flex flex-col sm:flex-row flex-wrap gap-4">
                 <button
                   onClick={handleNextQuestion}
                   disabled={gameState.questionQueue.length === 0}
-                  className="flex-1 min-w-[200px] bg-blue-600 hover:bg-blue-700 disabled:opacity-30 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-3 text-lg"
+                  className="flex-[2] min-w-[200px] bg-blue-600 hover:bg-blue-700 disabled:opacity-30 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-3 text-lg"
                 >
-                  <i className="fa-solid fa-forward-step"></i> {gameState.question ? 'NEXT QUESTION' : 'START GAME'}
-                  {gameState.questionQueue.length > 0 && <span className="bg-black/30 px-2 py-0.5 rounded text-sm">{gameState.questionQueue.length} left</span>}
+                  <i className="fa-solid fa-forward-step"></i> {gameState.question ? 'NEXT' : 'START'}
+                  {gameState.questionQueue.length > 0 && <span className="bg-black/30 px-2 py-0.5 rounded text-sm">{gameState.questionQueue.length}</span>}
                 </button>
 
                 <button
                   onClick={handleReveal}
                   disabled={gameState.status !== GameStatus.QUESTION_ACTIVE}
-                  className="flex-1 min-w-[200px] bg-emerald-600 hover:bg-emerald-700 disabled:opacity-30 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-lg"
+                  className="flex-[2] min-w-[200px] bg-emerald-600 hover:bg-emerald-700 disabled:opacity-30 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-lg"
                 >
-                  <i className="fa-solid fa-eye"></i> REVEAL RESULTS
+                  <i className="fa-solid fa-eye"></i> REVEAL
                 </button>
 
-                <button
-                  onClick={async () => {
-                    const latest = await (await import('../services/supabaseService')).fetchInitialGameState();
-                    if (latest) updateState(latest);
-                  }}
-                  className="px-6 bg-zinc-800 hover:bg-zinc-700 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
-                  title="Force Cloud Sync"
-                >
-                  <i className="fa-solid fa-cloud-arrow-down"></i>
-                </button>
+                <div className="flex flex-1 gap-4">
+                  <button
+                    onClick={async () => {
+                      const latest = await (await import('../services/supabaseService')).fetchInitialGameState();
+                      if (latest) updateState(latest);
+                    }}
+                    className="flex-1 bg-zinc-800 hover:bg-zinc-700 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                    title="Force Cloud Sync"
+                  >
+                    <i className="fa-solid fa-cloud-arrow-down"></i>
+                  </button>
 
-                <button
-                  onClick={handleReset}
-                  className="px-6 bg-zinc-800 hover:bg-red-900/40 hover:text-red-400 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
-                  title="Reset Everything"
-                >
-                  <i className="fa-solid fa-rotate-right"></i>
-                </button>
+                  <button
+                    onClick={handleReset}
+                    className="flex-1 bg-zinc-800 hover:bg-red-900/40 hover:text-red-400 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                    title="Reset Everything"
+                  >
+                    <i className="fa-solid fa-rotate-right"></i>
+                  </button>
+                </div>
               </div>
             </div>
           </section>

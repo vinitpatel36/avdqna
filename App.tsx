@@ -158,8 +158,8 @@ const App: React.FC = () => {
 
   if (!role) {
     return (
-      <div className="min-h-screen bg-black bg-grid flex flex-col items-center justify-center p-6 text-center">
-        <div className="max-w-md w-full space-y-8 bg-zinc-900/50 p-8 rounded-3xl border border-zinc-800 backdrop-blur-sm transition-all relative">
+      <div className="min-h-screen bg-black bg-grid flex flex-col items-center justify-center p-4 sm:p-6 text-center">
+        <div className="max-w-md w-full space-y-6 sm:space-y-8 bg-zinc-900/50 p-6 sm:p-8 rounded-3xl border border-zinc-800 backdrop-blur-sm transition-all relative">
 
           <div className="absolute -top-4 -right-4">
             {dbStatus === 'connected' ? (
@@ -180,8 +180,8 @@ const App: React.FC = () => {
             )}
           </div>
 
-          <h1 className="text-7xl font-display bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(59,130,246,0.5)] tracking-tight">QnA</h1>
-          <p className="text-zinc-400 text-lg">Interactive Game Show Platform</p>
+          <h1 className="text-6xl sm:text-7xl font-display bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(59,130,246,0.5)] tracking-tight">QnA</h1>
+          <p className="text-zinc-400 text-base sm:text-lg">Interactive Game Show Platform</p>
 
           <div className="grid grid-cols-1 gap-4 pt-8">
             {isJoining ? (
