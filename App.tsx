@@ -10,6 +10,7 @@ const INITIAL_STATE: GameState = {
   status: GameStatus.LOBBY,
   question: '',
   questionQueue: [],
+  questionHistory: [],
   participants: []
 };
 

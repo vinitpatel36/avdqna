@@ -22,6 +22,7 @@ export interface GameState {
   status: GameStatus;
   question: string;
   questionQueue: string[];
+  questionHistory: string[];
   participants: Participant[];
 }
 

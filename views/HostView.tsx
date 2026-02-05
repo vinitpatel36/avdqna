@@ -23,30 +23,57 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
   };
 
   const handleNext = () => {
-    if (gameState.status === GameStatus.LOBBY || gameState.status === GameStatus.QUESTION_ACTIVE || gameState.status === GameStatus.RESULTS) {
-      if (gameState.questionQueue.length === 0) {
-        updateState({ ...gameState, status: GameStatus.LOBBY, question: '' });
-      } else {
-        const [nextQ, ...remainingQueue] = gameState.questionQueue;
-        updateState({
-          ...gameState,
-          question: nextQ,
-          questionQueue: remainingQueue,
-          status: GameStatus.QUESTION_ACTIVE,
-          participants: gameState.participants.map(p => ({ ...p, answer: '', isSubmitted: false }))
-        });
-      }
+    // Current question becomes history if moving forward
+    const newHistory = gameState.question ? [...gameState.questionHistory, gameState.question] : gameState.questionHistory;
+
+    if (gameState.questionQueue.length === 0) {
+      updateState({
+        ...gameState,
+        status: GameStatus.LOBBY,
+        question: '',
+        questionHistory: newHistory
+      });
+    } else {
+      const [nextQ, ...remainingQueue] = gameState.questionQueue;
+      updateState({
+        ...gameState,
+        question: nextQ,
+        questionQueue: remainingQueue,
+        questionHistory: newHistory,
+        status: GameStatus.QUESTION_ACTIVE,
+        participants: gameState.participants.map(p => ({ ...p, answer: '', isSubmitted: false }))
+      });
     }
   };
 
   const handleBack = () => {
-    if (gameState.status === GameStatus.QUESTION_ACTIVE || gameState.status === GameStatus.RESULTS) {
+    if (gameState.status === GameStatus.LOBBY) return;
+
+    if (gameState.questionHistory.length === 0) {
+      // If no history, just go back to lobby and put current question back in queue
       const newQueue = gameState.question ? [gameState.question, ...gameState.questionQueue] : gameState.questionQueue;
       updateState({
         ...gameState,
         status: GameStatus.LOBBY,
         question: '',
-        questionQueue: newQueue
+        questionQueue: newQueue,
+        questionHistory: []
+      });
+    } else {
+      // Pop last question from history
+      const lastQ = gameState.questionHistory[gameState.questionHistory.length - 1];
+      const remainingHistory = gameState.questionHistory.slice(0, -1);
+
+      // Put current question back at start of queue
+      const newQueue = gameState.question ? [gameState.question, ...gameState.questionQueue] : gameState.questionQueue;
+
+      updateState({
+        ...gameState,
+        question: lastQ,
+        questionQueue: newQueue,
+        questionHistory: remainingHistory,
+        status: GameStatus.QUESTION_ACTIVE,
+        participants: gameState.participants.map(p => ({ ...p, answer: '', isSubmitted: false }))
       });
     }
   };
@@ -59,6 +86,7 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
           status: GameStatus.LOBBY,
           question: '',
           questionQueue: [],
+          questionHistory: [],
           participants: []
         });
         console.log("Reset successful.");
