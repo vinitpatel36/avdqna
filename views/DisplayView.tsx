@@ -16,7 +16,7 @@ const DisplayView: React.FC<DisplayViewProps> = ({ gameState }) => {
 
       {/* Header */}
       <header className="relative z-10 pt-12 pb-8 px-12 text-center">
-        <h1 className="text-8xl font-display text-blue-500 led-glow tracking-widest leading-none">QnA</h1>
+        <h1 className="text-9xl font-display bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(59,130,246,0.6)] tracking-tighter leading-none">QnA</h1>
         <div className="h-1 w-24 bg-blue-500 mx-auto mt-4 rounded-full"></div>
       </header>
 

@@ -178,7 +178,7 @@ const App: React.FC = () => {
             )}
           </div>
 
-          <h1 className="text-6xl font-display text-blue-500 led-glow">QnA</h1>
+          <h1 className="text-7xl font-display bg-gradient-to-b from-blue-400 to-blue-600 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(59,130,246,0.5)] tracking-tight">QnA</h1>
           <p className="text-zinc-400 text-lg">Interactive Game Show Platform</p>
 
           <div className="grid grid-cols-1 gap-4 pt-8">
