@@ -48,14 +48,14 @@ const App: React.FC = () => {
     else localStorage.removeItem('qna-participant-id');
 
     // Auto-return players to lobby selection if the room is wiped
-    if (role === Role.PARTICIPANT && participantId) {
+    if (role === Role.PARTICIPANT && participantId && dbStatus === 'connected') {
       const isStillInGame = gameState.participants.some(p => p.id === participantId);
       if (!isStillInGame && gameState.status === GameStatus.LOBBY && gameState.participants.length === 0) {
         setRole(null);
         setParticipantId(null);
       }
     }
-  }, [role, gameState.participants, gameState.status, participantId]);
+  }, [role, gameState.participants, gameState.status, participantId, dbStatus]);
 
   // Initial Fetch & Real-time Subscription
   useEffect(() => {

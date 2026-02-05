@@ -20,11 +20,26 @@ const ParticipantView: React.FC<ParticipantViewProps> = ({ gameState, participan
     }
   }, [gameState.status, gameState.question]);
 
+  if (dbStatus === 'checking') {
+    return (
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-12 h-12 border-4 border-zinc-900 border-t-blue-500 rounded-full animate-spin mb-4"></div>
+        <h3 className="text-xl font-bold text-zinc-400">Reconnecting...</h3>
+      </div>
+    );
+  }
+
   if (!me) {
     return (
       <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center">
         <h2 className="text-2xl font-bold text-red-500">You have been disconnected</h2>
         <p className="text-zinc-500 mt-2">The host might have removed you or the room reset.</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="mt-6 px-6 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl font-bold transition-all"
+        >
+          TRY AGAIN
+        </button>
       </div>
     );
   }
