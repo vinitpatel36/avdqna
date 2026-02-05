@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { GameState, GameStatus, Participant } from '../types';
+import { GameState, GameStatus, Participant, HistoryItem } from '../types';
 import { generateFunQuestion } from '../services/geminiService';
 
 interface HostViewProps {
@@ -23,8 +23,8 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
   };
 
   const handleNext = () => {
-    const history = gameState.questionHistory || [];
-    const newHistory = gameState.question ? [...history, gameState.question] : history;
+    const history = (gameState.questionHistory || []) as HistoryItem[];
+    const newHistory: HistoryItem[] = gameState.question ? [...history, { question: gameState.question, participants: gameState.participants }] : history;
 
     if (gameState.questionQueue.length === 0) {
       updateState({
@@ -49,7 +49,7 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
   const handleBack = () => {
     if (gameState.status === GameStatus.LOBBY) return;
 
-    const history = gameState.questionHistory || [];
+    const history = (gameState.questionHistory || []) as HistoryItem[];
     if (history.length === 0) {
       // If no history, just go back to lobby and put current question back in queue
       const newQueue = gameState.question ? [gameState.question, ...gameState.questionQueue] : gameState.questionQueue;
@@ -61,19 +61,27 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
         questionHistory: []
       });
     } else {
-      const lastQ = history[history.length - 1];
+      const historyItem = history[history.length - 1];
       const remainingHistory = history.slice(0, -1);
 
       // Put current question back at start of queue
       const newQueue = gameState.question ? [gameState.question, ...gameState.questionQueue] : gameState.questionQueue;
 
+      // Restore answers for current participants based on the history item
+      const restoredParticipants = gameState.participants.map(p => {
+        const historicalRecord = historyItem.participants.find(hp => hp.id === p.id);
+        return historicalRecord ?
+          { ...p, answer: historicalRecord.answer, isSubmitted: historicalRecord.isSubmitted } :
+          { ...p, answer: '', isSubmitted: false };
+      });
+
       updateState({
         ...gameState,
-        question: lastQ,
+        question: historyItem.question,
         questionQueue: newQueue,
         questionHistory: remainingHistory,
         status: GameStatus.QUESTION_ACTIVE,
-        participants: gameState.participants.map(p => ({ ...p, answer: '', isSubmitted: false }))
+        participants: restoredParticipants
       });
     }
   };

@@ -18,11 +18,16 @@ export interface Participant {
   isSubmitted: boolean;
 }
 
+export interface HistoryItem {
+  question: string;
+  participants: Participant[];
+}
+
 export interface GameState {
   status: GameStatus;
   question: string;
   questionQueue: string[];
-  questionHistory: string[];
+  questionHistory: HistoryItem[];
   participants: Participant[];
 }
 

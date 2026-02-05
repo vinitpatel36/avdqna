@@ -100,10 +100,13 @@ const ParticipantView: React.FC<ParticipantViewProps> = ({ gameState, participan
             </div>
 
             {me.isSubmitted ? (
-              <div className="bg-emerald-950/20 border border-emerald-900/50 rounded-2xl p-8 text-center space-y-2">
+              <div className="bg-emerald-950/20 border border-emerald-900/50 rounded-2xl p-8 text-center space-y-4">
                 <i className="fa-solid fa-check-circle text-4xl text-emerald-500 mb-2"></i>
-                <h3 className="text-xl font-bold text-white">Answer Submitted!</h3>
-                <p className="text-emerald-500/70 text-sm">Hang tight, waiting for others...</p>
+                <div>
+                  <h3 className="text-xl font-bold text-white">Answer Submitted!</h3>
+                  <p className="text-emerald-500/70 text-sm italic mt-2">"{me.answer}"</p>
+                </div>
+                <p className="text-zinc-500 text-xs uppercase tracking-widest pt-4 border-t border-emerald-900/30">Waiting for other players...</p>
               </div>
             ) : (
               <div className="space-y-4">
