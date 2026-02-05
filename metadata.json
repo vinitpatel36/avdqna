@@ -1,0 +1,5 @@
+{
+  "name": "QuickFive Showdown",
+  "description": "A high-energy interactive game show platform for up to 5 participants. Features a host control panel, participant input interfaces, and a stunning LED-optimized display screen for broadcasting answers in real-time.",
+  "requestFramePermissions": []
+}

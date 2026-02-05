@@ -1,0 +1,25 @@
+{
+  "status": "QUESTION_ACTIVE",
+  "question": "test",
+  "questionQueue": [],
+  "participants": [
+    {
+      "id": "7oaivf",
+      "name": "Vinit",
+      "answer": "dfsdf",
+      "isSubmitted": true
+    },
+    {
+      "id": "7shaif",
+      "name": "asdas",
+      "answer": "fad",
+      "isSubmitted": true
+    },
+    {
+      "id": "90c0xk",
+      "name": "sdfsdf",
+      "answer": "sfsdf",
+      "isSubmitted": true
+    }
+  ]
+}
