@@ -98,8 +98,63 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
           </div>
         )}
 
+        {/* Current Game Status - Full Width at Top */}
+        <div className="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 space-y-6">
+          <div className="p-6 bg-black border-2 border-zinc-800 rounded-2xl relative overflow-hidden group">
+            <div className="absolute top-0 right-0 p-3">
+              <span className={`px-2 py-1 rounded text-[10px] font-bold tracking-widest ${gameState.status === GameStatus.QUESTION_ACTIVE ? 'bg-emerald-500/20 text-emerald-500' : 'bg-zinc-500/20 text-zinc-500'}`}>
+                {gameState.status}
+              </span>
+            </div>
+            <span className="text-xs text-zinc-500 uppercase font-bold tracking-widest block mb-2">Active Question</span>
+            <p className="text-xl text-zinc-100 font-medium font-display leading-tight">
+              {gameState.question || "WAITING TO START..."}
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row flex-wrap gap-4">
+            <button
+              onClick={handleNextQuestion}
+              disabled={gameState.questionQueue.length === 0}
+              className="flex-[2] min-w-[200px] bg-blue-600 hover:bg-blue-700 disabled:opacity-30 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-3 text-lg"
+            >
+              <i className="fa-solid fa-forward-step"></i> {gameState.question ? 'NEXT' : 'START'}
+              {gameState.questionQueue.length > 0 && <span className="bg-black/30 px-2 py-0.5 rounded text-sm">{gameState.questionQueue.length}</span>}
+            </button>
+
+            <button
+              onClick={handleReveal}
+              disabled={gameState.status !== GameStatus.QUESTION_ACTIVE}
+              className="flex-[2] min-w-[200px] bg-emerald-600 hover:bg-emerald-700 disabled:opacity-30 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-lg"
+            >
+              <i className="fa-solid fa-eye"></i> REVEAL
+            </button>
+
+            <div className="flex flex-1 gap-4">
+              <button
+                onClick={async () => {
+                  const latest = await (await import('../services/supabaseService')).fetchInitialGameState();
+                  if (latest) updateState(latest);
+                }}
+                className="flex-1 bg-zinc-800 hover:bg-zinc-700 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                title="Force Cloud Sync"
+              >
+                <i className="fa-solid fa-cloud-arrow-down"></i>
+              </button>
+
+              <button
+                onClick={handleReset}
+                className="flex-1 bg-zinc-800 hover:bg-red-900/40 hover:text-red-400 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
+                title="Reset Everything"
+              >
+                <i className="fa-solid fa-rotate-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          {/* Main Controls */}
+          {/* Sidebar & Other controls */}
           <section className="lg:col-span-8 space-y-6">
             <div className="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 space-y-4">
               <h3 className="text-xl font-semibold mb-4 flex items-center">
@@ -126,61 +181,6 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
                   </button>
                 </div>
               </form>
-            </div>
-
-            {/* Current Game Status */}
-            <div className="bg-zinc-900 p-6 rounded-2xl border border-zinc-800 space-y-6">
-              <div className="p-6 bg-black border-2 border-zinc-800 rounded-2xl relative overflow-hidden group">
-                <div className="absolute top-0 right-0 p-3">
-                  <span className={`px-2 py-1 rounded text-[10px] font-bold tracking-widest ${gameState.status === GameStatus.QUESTION_ACTIVE ? 'bg-emerald-500/20 text-emerald-500' : 'bg-zinc-500/20 text-zinc-500'}`}>
-                    {gameState.status}
-                  </span>
-                </div>
-                <span className="text-xs text-zinc-500 uppercase font-bold tracking-widest block mb-2">Active Question</span>
-                <p className="text-2xl text-zinc-100 font-medium font-display leading-tight">
-                  {gameState.question || "WAITING TO START..."}
-                </p>
-              </div>
-
-              <div className="flex flex-col sm:flex-row flex-wrap gap-4">
-                <button
-                  onClick={handleNextQuestion}
-                  disabled={gameState.questionQueue.length === 0}
-                  className="flex-[2] min-w-[200px] bg-blue-600 hover:bg-blue-700 disabled:opacity-30 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-3 text-lg"
-                >
-                  <i className="fa-solid fa-forward-step"></i> {gameState.question ? 'NEXT' : 'START'}
-                  {gameState.questionQueue.length > 0 && <span className="bg-black/30 px-2 py-0.5 rounded text-sm">{gameState.questionQueue.length}</span>}
-                </button>
-
-                <button
-                  onClick={handleReveal}
-                  disabled={gameState.status !== GameStatus.QUESTION_ACTIVE}
-                  className="flex-[2] min-w-[200px] bg-emerald-600 hover:bg-emerald-700 disabled:opacity-30 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-lg"
-                >
-                  <i className="fa-solid fa-eye"></i> REVEAL
-                </button>
-
-                <div className="flex flex-1 gap-4">
-                  <button
-                    onClick={async () => {
-                      const latest = await (await import('../services/supabaseService')).fetchInitialGameState();
-                      if (latest) updateState(latest);
-                    }}
-                    className="flex-1 bg-zinc-800 hover:bg-zinc-700 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
-                    title="Force Cloud Sync"
-                  >
-                    <i className="fa-solid fa-cloud-arrow-down"></i>
-                  </button>
-
-                  <button
-                    onClick={handleReset}
-                    className="flex-1 bg-zinc-800 hover:bg-red-900/40 hover:text-red-400 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2"
-                    title="Reset Everything"
-                  >
-                    <i className="fa-solid fa-rotate-right"></i>
-                  </button>
-                </div>
-              </div>
             </div>
           </section>
 
