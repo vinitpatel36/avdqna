@@ -22,22 +22,47 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
     setManualQuestion('');
   };
 
-  const handleNextQuestion = () => {
-    if (gameState.questionQueue.length === 0) return;
-
-    const [nextQ, ...remainingQueue] = gameState.questionQueue;
-
-    updateState({
-      ...gameState,
-      question: nextQ,
-      questionQueue: remainingQueue,
-      status: GameStatus.QUESTION_ACTIVE,
-      participants: gameState.participants.map(p => ({ ...p, answer: '', isSubmitted: false }))
-    });
+  const handleNext = () => {
+    if (gameState.status === GameStatus.LOBBY) {
+      if (gameState.questionQueue.length === 0) return;
+      const [nextQ, ...remainingQueue] = gameState.questionQueue;
+      updateState({
+        ...gameState,
+        question: nextQ,
+        questionQueue: remainingQueue,
+        status: GameStatus.QUESTION_ACTIVE,
+        participants: gameState.participants.map(p => ({ ...p, answer: '', isSubmitted: false }))
+      });
+    } else if (gameState.status === GameStatus.QUESTION_ACTIVE) {
+      updateState({ ...gameState, status: GameStatus.RESULTS });
+    } else if (gameState.status === GameStatus.RESULTS) {
+      if (gameState.questionQueue.length === 0) {
+        updateState({ ...gameState, status: GameStatus.LOBBY, question: '' });
+      } else {
+        const [nextQ, ...remainingQueue] = gameState.questionQueue;
+        updateState({
+          ...gameState,
+          question: nextQ,
+          questionQueue: remainingQueue,
+          status: GameStatus.QUESTION_ACTIVE,
+          participants: gameState.participants.map(p => ({ ...p, answer: '', isSubmitted: false }))
+        });
+      }
+    }
   };
 
-  const handleReveal = () => {
-    updateState({ ...gameState, status: GameStatus.RESULTS });
+  const handleBack = () => {
+    if (gameState.status === GameStatus.RESULTS) {
+      updateState({ ...gameState, status: GameStatus.QUESTION_ACTIVE });
+    } else if (gameState.status === GameStatus.QUESTION_ACTIVE) {
+      const newQueue = gameState.question ? [gameState.question, ...gameState.questionQueue] : gameState.questionQueue;
+      updateState({
+        ...gameState,
+        status: GameStatus.LOBBY,
+        question: '',
+        questionQueue: newQueue
+      });
+    }
   };
 
   const handleReset = async () => {
@@ -114,20 +139,25 @@ const HostView: React.FC<HostViewProps> = ({ gameState, updateState, dbStatus })
 
           <div className="flex flex-col sm:flex-row flex-wrap gap-4">
             <button
-              onClick={handleNextQuestion}
-              disabled={gameState.questionQueue.length === 0}
-              className="flex-[2] min-w-[200px] bg-blue-600 hover:bg-blue-700 disabled:opacity-30 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-3 text-lg"
+              onClick={handleBack}
+              disabled={gameState.status === GameStatus.LOBBY}
+              className="flex-1 min-w-[120px] bg-zinc-800 hover:bg-zinc-700 disabled:opacity-30 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-lg"
             >
-              <i className="fa-solid fa-forward-step"></i> {gameState.question ? 'NEXT' : 'START'}
-              {gameState.questionQueue.length > 0 && <span className="bg-black/30 px-2 py-0.5 rounded text-sm">{gameState.questionQueue.length}</span>}
+              <i className="fa-solid fa-backward"></i> BACK
             </button>
 
             <button
-              onClick={handleReveal}
-              disabled={gameState.status !== GameStatus.QUESTION_ACTIVE}
-              className="flex-[2] min-w-[200px] bg-emerald-600 hover:bg-emerald-700 disabled:opacity-30 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-2 text-lg"
+              onClick={handleNext}
+              disabled={gameState.status === GameStatus.LOBBY && gameState.questionQueue.length === 0}
+              className="flex-[3] min-w-[200px] bg-blue-600 hover:bg-blue-700 disabled:opacity-30 py-4 rounded-xl font-bold transition-all flex items-center justify-center gap-3 text-lg shadow-lg active:scale-95"
             >
-              <i className="fa-solid fa-eye"></i> REVEAL
+              <i className="fa-solid fa-forward"></i>
+              {gameState.status === GameStatus.LOBBY ? 'START SHOW' :
+                gameState.status === GameStatus.QUESTION_ACTIVE ? 'REVEAL ANSWERS' :
+                  'NEXT QUESTION'}
+              {gameState.status !== GameStatus.QUESTION_ACTIVE && gameState.questionQueue.length > 0 &&
+                <span className="bg-black/30 px-2 py-0.5 rounded text-sm">{gameState.questionQueue.length}</span>
+              }
             </button>
 
             <div className="flex flex-1 gap-4">
