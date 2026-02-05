@@ -7,7 +7,10 @@ if (!supabaseUrl || !supabaseAnonKey) {
     console.warn("Supabase credentials missing. App will fall back to local state until configured.");
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Only initialize if we have the credentials to prevent crashes
+export const supabase = (supabaseUrl && supabaseAnonKey)
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null as any;
 
 const TABLE_NAME = 'game_sessions';
 const SESSION_ID = 'default-session'; // You can make this dynamic later

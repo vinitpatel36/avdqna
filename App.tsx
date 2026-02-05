@@ -48,6 +48,14 @@ const App: React.FC = () => {
     const init = async () => {
       try {
         setDbStatus('checking');
+        // Check if keys are actually present in the environment
+        const hasKeys = import.meta.env.VITE_SUPABASE_URL && import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+        if (!hasKeys) {
+          setDbStatus('error');
+          return;
+        }
+
         const serverState = await fetchInitialGameState();
         if (serverState) {
           setGameState(serverState);
